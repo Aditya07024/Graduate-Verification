@@ -117,7 +117,7 @@ exports.sendMessage = async (req, res) => {
 
 exports.getConversation = async (req, res) => {
   try {
-    const { userId, userType } = req.params;
+    const { userId } = req.params;
     
     const conversation = await Chat.find({
       $or: [
