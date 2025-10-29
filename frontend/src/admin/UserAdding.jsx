@@ -3,9 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const authurl = import.meta.env.VITE_ADMIN_ROUTE
-const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE
-const userAuthUrl= import.meta.env.VITE_AUTH_ROUTE
+const authurl = import.meta.env.VITE_ADMIN_ROUTE;
+const nationalidurl = import.meta.env.VITE_NATIONAL_ID_ROUTE;
+const userAuthUrl = import.meta.env.VITE_AUTH_ROUTE;
 const UserAddingPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -55,9 +55,9 @@ const UserAddingPage = () => {
 
     setLoading(true);
     try {
-      const { data } = await axios.get(`${nationalidurl}/nationalIdNumber`, {
-        params: { nationalIdNumber: formData.nationalIdNumber },
-      });
+      const { data } = await axios.get(
+        `${nationalidurl}/${formData.nationalIdNumber}`
+      );
 
       if (data.success && data.nationalID) {
         setFormData((prev) => ({
@@ -67,7 +67,7 @@ const UserAddingPage = () => {
           lastName: data.nationalID.lastName,
           gender: data.nationalID.gender,
         }));
- 
+
         setStep(2);
         setError("");
       } else {
@@ -104,15 +104,17 @@ const UserAddingPage = () => {
       } else {
         setError(data.error || "Identity verification failed");
       }
-} catch (err) {
-  if (err.response?.status === 403) {
-    setError("Access denied. Please check your permissions or login again.");
-    // Optionally redirect to login
-    navigate("/login");
-  } else {
-    setError(err.response?.data?.error || "Verification error");
-  }
-}finally {
+    } catch (err) {
+      if (err.response?.status === 403) {
+        setError(
+          "Access denied. Please check your permissions or login again."
+        );
+        // Optionally redirect to login
+        navigate("/login");
+      } else {
+        setError(err.response?.data?.error || "Verification error");
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -131,22 +133,25 @@ const UserAddingPage = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("adminToken");
-      const { data } = await axios.post(`${authurl}/createUser`, {
-        nationalIdNumber: formData.nationalIdNumber,
-        firstName: formData.firstName,
-        middleName: formData.middleName,
-        lastName: formData.lastName,
-        gender: formData.gender,
-        phone: formData.phone,
-        role: formData.role,
-        email: formData.email,
-        password: formData.password,
-      },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const { data } = await axios.post(
+        `${authurl}/createUser`,
+        {
+          nationalIdNumber: formData.nationalIdNumber,
+          firstName: formData.firstName,
+          middleName: formData.middleName,
+          lastName: formData.lastName,
+          gender: formData.gender,
+          phone: formData.phone,
+          role: formData.role,
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (data.success) {
         setError("");
         Swal.fire({
@@ -154,22 +159,21 @@ const UserAddingPage = () => {
           title: "User created successfully",
           showConfirmButton: false,
           timer: 1500,
-        })
-        setTimeout(() => setStep(1)
-, 1500);
+        });
+        setTimeout(() => setStep(1), 1500);
 
-      setFormData({
-        nationalIdNumber: "",
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        gender: "",
-        phone: "",
-        email: "",
-        password: "",
-        role: "user",
-        confirmPassword: "",
-      });
+        setFormData({
+          nationalIdNumber: "",
+          firstName: "",
+          middleName: "",
+          lastName: "",
+          gender: "",
+          phone: "",
+          email: "",
+          password: "",
+          role: "user",
+          confirmPassword: "",
+        });
       } else {
         setError(data?.error || "Registration failed");
       }
@@ -180,8 +184,6 @@ const UserAddingPage = () => {
     }
   };
 
-
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 py-12 overflow-x-hidden">
       <div className="w-full max-w-full md:max-w-7xl bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-8">
@@ -191,30 +193,29 @@ const UserAddingPage = () => {
 
         {/* Progress Steps */}
         <div className="flex justify-between mb-8">
-{[1, 2, 3].map((stepNumber) => (
-  <div key={stepNumber} className="flex flex-col items-center">
-    <div
-      className={`w-8 h-8 rounded-full flex items-center justify-center 
+          {[1, 2, 3].map((stepNumber) => (
+            <div key={stepNumber} className="flex flex-col items-center">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center 
       ${
         step >= stepNumber
           ? "bg-blue-600 text-white"
           : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
       }`}
-    >
-      {stepNumber}
-    </div>
-    <div
-      className={`text-xs mt-1 ${
-        step >= stepNumber
-          ? "text-blue-600 dark:text-blue-400"
-          : "text-gray-500"
-      }`}
-    >
-      {["Verify ID", "Confirm", "Account"][stepNumber - 1]}
-    </div>
-  </div>
-))}
-
+              >
+                {stepNumber}
+              </div>
+              <div
+                className={`text-xs mt-1 ${
+                  step >= stepNumber
+                    ? "text-blue-600 dark:text-blue-400"
+                    : "text-gray-500"
+                }`}
+              >
+                {["Verify ID", "Confirm", "Account"][stepNumber - 1]}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Error Message */}
@@ -399,8 +400,6 @@ const UserAddingPage = () => {
             </button>
           </div>
         )}
-
-  
       </div>
     </div>
   );

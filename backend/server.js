@@ -201,6 +201,7 @@ app.use((req, res, next) => {
   next();
 });
 // Routes
+console.log("Attempting to reach admin routes...");
 app.get("/", (req, res) => {
   res.send("Backend is running...");
 });
