@@ -317,9 +317,9 @@ const LandingPage = ({ children }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <h3 className="text-xl font-bold mb-4">GLA University</h3>
-              <p className="mb-2">P.O. Box: 334, GLA, Mathura</p>
+              <p className="mb-2">GLA University, 17km Stone, NH 2, Mathura Delhi Road, PO Chaumuhan, Mathura, Chhata, Mathura</p>
               <p className="mb-2">Email: glauniversity@gla.ac.in</p>
-              <p>Phone: +251 XX XXX XXXX</p>
+              <p>Phone: +91 5662-250900</p>
             </div>
 
             <div>
