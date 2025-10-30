@@ -218,7 +218,7 @@ const UserLayout = ({ children }) => {
                   <GraduationCap className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-                  BUGCVS
+                  GLAU
                 </span>
               </Link>
             </div>
@@ -386,7 +386,7 @@ const UserLayout = ({ children }) => {
           <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-xl">
               {/* <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full mr-3"> */}
                <MessageSquare className=" text-blue-600 dark:text-gray-100" />
-            <h3 className="font-semibold text-lg">BUGCVS help chat</h3>
+            <h3 className="font-semibold text-lg">GLAU help chat</h3>
           {/* </div> */}
            
             <div className="flex gap-2">
@@ -427,7 +427,7 @@ const UserLayout = ({ children }) => {
           <div>
             <h3 className="text-xl font-bold mb-4">GLA University</h3>
             <p className="mb-2">P.O. Box: 334, GLA, Ethiopia</p>
-            <p className="mb-2">Email: info@GLAu.edu.et</p>
+            <p className="mb-2">Email: info@GLAU.edu.et</p>
             <p>Phone: +251 XX XXX XXXX</p>
           </div>
           <div>

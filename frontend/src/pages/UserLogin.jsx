@@ -23,9 +23,9 @@ const UserLogin = ({ setCurrentUser }) => {
       import.meta.env.MODE === "production"
     ) {
       setFormData({
-        email: "madisomelese2@gmail.com",
-        nationalIdNumber: "1111111111111119",
-        password: "@Madisha5423$$",
+        email: "john.smith@example.com",
+        nationalIdNumber: "1234567890123456",
+        password: "password123",
       });
 
       // Visual feedback

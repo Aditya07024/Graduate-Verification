@@ -1,254 +1,3 @@
-// import React, { useState, useEffect, useRef } from "react";
-// import axios from "axios";
-// import io from "socket.io-client";
-
-// const chatapi = import.meta.env.VITE_CHAT_ROUTE;
-// const ChatPage = ({ currentUser }) => {
-//   const [messages, setMessages] = useState([]);
-//   const [newMessage, setNewMessage] = useState("");
-//   const [selectedUser, setSelectedUser] = useState(null);
-//   const [users, setUsers] = useState([]);
-//   const [admins, setAdmins] = useState([]);
-//   const [isTyping, setIsTyping] = useState(false);
-//   const socketRef = useRef(null);
-//   const messagesEndRef = useRef(null);
-
-//   // Initialize socket connection
-//   useEffect(() => {
-//     socketRef.current = io("http://localhost:5000", {
-//       auth: {
-//         token: localStorage.getItem("token"),
-//       },
-//     });
-
-//     // Set up event listeners
-//     socketRef.current.on("receive-message", (message) => {
-//       setMessages((prev) => [...prev, message]);
-//     });
-
-//     socketRef.current.on("typing", ({ isTyping }) => {
-//       setIsTyping(isTyping);
-//     });
-
-//     return () => {
-//       if (socketRef.current) {
-//         socketRef.current.disconnect();
-//       }
-//     };
-//   }, []);
-
-//   // Load users list
-//   useEffect(() => {
-//     const fetchUsers = async () => {
-//       try {
-//         const res = await axios.get(`${chatapi}/admin/all-users`, {
-//           headers: {
-//             Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-//           },
-//         });
-//         setUsers(res.data.users);
-//         setAdmins(res.data.admins);
-//       } catch (err) {
-//         console.error("Error fetching users:", err);
-//       }
-//     };
-
-//     fetchUsers();
-//   }, []);
-
-//   // Load conversation when user is selected
-//   useEffect(() => {
-//     const fetchConversation = async () => {
-//       if (!selectedUser) return;
-
-//       try {
-//         const res = await axios.get(
-//           `${chatapi}/conversation/${selectedUser._id}`,
-//           {
-//             headers: {
-//               Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-//             },
-//           }
-//         );
-//         setMessages(res.data);
-//       } catch (err) {
-//         console.error("Error fetching conversation:", err);
-//       }
-//     };
-
-//     fetchConversation();
-//   }, [selectedUser]);
-
-//   // Auto-scroll to bottom
-//   useEffect(() => {
-//     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-//   }, [messages]);
-//   const handleSendMessage = async () => {
-//     if (!newMessage.trim() || !selectedUser) return;
-
-//     const tempId = Date.now().toString();
-//     const tempMessage = {
-//       _id: tempId,
-//       sender: currentUser,
-//       recipient: selectedUser,
-//       content: newMessage,
-//       createdAt: new Date(),
-//       read: false,
-//       isTemp: true, // Add a flag for temporary messages
-//     };
-
-//     // Optimistically add the message
-//     setMessages((prev) => [...prev, tempMessage]);
-//     setNewMessage("");
-
-//     try {
-//       // Socket emit
-//       socketRef.current.emit("send-message", {
-//         recipientId: selectedUser._id,
-//         content: newMessage,
-//       });
-
-//       // HTTP send
-//       const payload = {
-//         recipientId: selectedUser._id,
-//         recipientModel: selectedUser.role === "admin" ? "Admin" : "User",
-//         chatType: currentUser.role === "admin" ? "support" : "direct",
-//         content: newMessage,
-//       };
-
-//       const res = await axios.post(`${chatapi}/send`, payload, {
-//         headers: {
-//           Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-//         },
-//       });
-
-//       // Replace temp message with server response
-//       setMessages((prev) => prev.map((m) => (m._id === tempId ? res.data : m)));
-//     } catch (err) {
-//       console.error("Error sending message:", err);
-//       // Remove the temp message if send fails
-//       setMessages((prev) => prev.filter((m) => m._id !== tempId));
-//     }
-//   };
-
-//   const handleTyping = (isTyping) => {
-//     if (!selectedUser) return;
-//     socketRef.current.emit("typing", {
-//       recipientId: selectedUser._id,
-//       isTyping,
-//     });
-//   };
-
-//   return (
-//     <div className="flex h-screen bg-gray-100">
-//       {/* Sidebar */}
-//       {/* Sidebar */}
-//       <div className="w-1/4 bg-white border-r">
-//         <div className="p-4 border-b">
-//           <h2 className="text-xl font-semibold">
-//             {currentUser.role === "admin" ? "All Users & Admins" : "Chats"}
-//           </h2>
-//         </div>
-//         <div className="overflow-y-auto h-[calc(100vh-60px)]">
-//           {[...admins, ...users].map((user) => (
-//             <div
-//               key={user._id}
-//               className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
-//                 selectedUser?._id === user._id ? "bg-blue-50" : ""
-//               }`}
-//               onClick={() => {
-//                 setSelectedUser(user);
-//                 setMessages([]); // clear previous messages
-//               }}
-//             >
-//               <p className="font-medium">
-//                 {user.firstName} {user.lastName}
-//               </p>
-//               <p className="text-sm text-gray-500">{user.email}</p>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-
-//       {/* Chat Area */}
-//       <div className="flex-1 flex flex-col">
-//         {selectedUser ? (
-//           <>
-//             <div className="p-4 border-b border-gray-200 bg-white">
-//               <div className="flex items-center">
-//                 <div>
-//                   <p className="font-medium">
-//                     {selectedUser.firstName} {selectedUser.lastName}
-//                   </p>
-//                   <p className="text-sm text-gray-500">
-//                     {isTyping ? "typing..." : ""}
-//                   </p>
-//                 </div>
-//               </div>
-//             </div>
-
-//             <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
-//               {messages.map((message) => (
-//                 <div
-//                   key={message._id}
-//                   className={`mb-4 max-w-[70%] p-3 rounded-lg ${
-//                     message.sender._id === currentUser._id
-//                       ? "bg-blue-500 text-white ml-auto"
-//                       : "bg-white mr-auto"
-//                   }`}
-//                 >
-//                   <p>{message.content}</p>
-//                   <p className="text-xs mt-1 opacity-80">
-//                     {new Date(message.createdAt).toLocaleTimeString([], {
-//                       hour: "2-digit",
-//                       minute: "2-digit",
-//                     })}
-//                   </p>
-//                 </div>
-//               ))}
-//               <div ref={messagesEndRef} />
-//             </div>
-
-//             <div className="p-4 border-t border-gray-200 bg-white">
-//               <div className="flex gap-2">
-//                 <input
-//                   type="text"
-//                   value={newMessage}
-//                   onChange={(e) => {
-//                     setNewMessage(e.target.value);
-//                     handleTyping(e.target.value.length > 0);
-//                   }}
-//                   onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-//                   placeholder="Type a message..."
-//                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-//                 />
-//                 <button
-//                   onClick={handleSendMessage}
-//                   className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-//                 >
-//                   Send
-//                 </button>
-//               </div>
-//             </div>
-//           </>
-//         ) : (
-//           <div className="flex items-center justify-center h-full">
-//             <div className="text-center p-8">
-//               <h3 className="text-xl font-medium text-gray-500 mb-2">
-//                 Select a user to start chatting
-//               </h3>
-//               <p className="text-gray-400">Choose from the list on the left</p>
-//             </div>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ChatPage;
-
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import io from "socket.io-client";
@@ -418,15 +167,148 @@ const ChatPage = ({ currentUser }) => {
     handleTyping(false); // Clear typing indicator
 
     try {
+      // Emit message via WebSocket
       socketRef.current.emit("send-message", {
         recipientId: selectedUser._id,
+        recipientType: selectedUser.modelType, // Add recipientType
         content: newMessage,
       });
 
+      // Send message via HTTP API for persistence
       const payload = {
         recipientId: selectedUser._id,
         recipientType: selectedUser.modelType,
         content: newMessage,
       };
 
-      const res = await axios.post(`
+      const res = await axios.post(`${baseUrl}/api/chat/send`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+      });
+
+      // Replace temporary message with actual message from server
+      setMessages((prev) => prev.map((m) => (m._id === tempId ? res.data : m)));
+    } catch (err) {
+      console.error("Error sending message:", err);
+      // If API call fails, remove the optimistic message
+      setMessages((prev) => prev.filter((m) => m._id !== tempId));
+    }
+  };
+
+  const handleTyping = (isTyping) => {
+    if (!selectedUser) return;
+    socketRef.current.emit("typing", {
+      recipientId: selectedUser._id,
+      isTyping,
+    });
+  };
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      {/* Sidebar */}
+      <div className="w-1/4 bg-white border-r">
+        <div className="p-4 border-b">
+          <h2 className="text-xl font-semibold">
+            {currentUser.role === "admin" ? "All Users & Admins" : "Chats"}
+          </h2>
+        </div>
+        <div className="overflow-y-auto h-[calc(100vh-60px)]">
+          {[...admins, ...users].map((user) => (
+            <div
+              key={user._id}
+              className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
+                selectedUser?._id === user._id ? "bg-blue-50" : ""
+              }`}
+              onClick={() => {
+                setSelectedUser(user);
+                setMessages([]); // clear previous messages
+              }}
+            >
+              <p className="font-medium">
+                {user.firstName} {user.lastName}
+              </p>
+              <p className="text-sm text-gray-500">{user.email}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Chat Area */}
+      <div className="flex-1 flex flex-col">
+        {selectedUser ? (
+          <>
+            <div className="p-4 border-b border-gray-200 bg-white">
+              <div className="flex items-center">
+                <div>
+                  <p className="font-medium">
+                    {selectedUser.firstName} {selectedUser.lastName}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {isTyping ? "typing..." : ""}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+              {messages.map((message) => (
+                <div
+                  key={message._id}
+                  className={`mb-4 max-w-[70%] p-3 rounded-lg ${
+                    message.sender._id === currentUser._id
+                      ? "bg-blue-500 text-white ml-auto"
+                      : "bg-white mr-auto"
+                  }`}
+                >
+                  <p>{message.content}</p>
+                  <p className="text-xs mt-1 opacity-80">
+                    {new Date(message.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <div className="p-4 border-t border-gray-200 bg-white">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => {
+                    setNewMessage(e.target.value);
+                    handleTyping(e.target.value.length > 0);
+                  }}
+                  onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                  placeholder="Type a message..."
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={handleSendMessage}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center p-8">
+              <h3 className="text-xl font-medium text-gray-500 mb-2">
+                Select a user to start chatting
+              </h3>
+              <p className="text-gray-400">Choose from the list on the left</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ChatPage;
