@@ -1,25 +1,67 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FiSun, FiMoon, FiMenu, FiX, FiArrowRight } from "react-icons/fi";
 import {
   FaFacebook,
   FaTwitter,
   FaLinkedin,
-  FaMapMarkerAlt,
   FaQuoteLeft,
 } from "react-icons/fa";
 import FAQSection from "../user/FAQSection";
+import "../App.css";
+
+const TwitterIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
+    <path fill="currentColor" d="M22.46 6c-.77.35-1.6.58-2.46.69a4.24 4.24 0 001.86-2.34 8.47 8.47 0 01-2.69 1.03 4.22 4.22 0 00-7.3 3.85A12 12 0 013 4.9a4.22 4.22 0 001.3 5.63 4.18 4.18 0 01-1.91-.53v.05a4.22 4.22 0 003.39 4.13 4.23 4.23 0 01-1.9.07 4.22 4.22 0 003.95 2.94A8.47 8.47 0 012 19.54a12 12 0 006.49 1.9c7.79 0 12.06-6.45 12.06-12.04 0-.18-.01-.36-.02-.54A8.6 8.6 0 0024 6.56c-.7.31-1.46.52-2.26.6z"/>
+  </svg>
+);
+
+const FacebookIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
+    <path fill="currentColor" d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.88 3.77-3.88 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12"/>
+  </svg>
+);
+
+const InstagramIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
+    <path fill="currentColor" d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7zm5 3.5A5.5 5.5 0 1112 18.5 5.5 5.5 0 0112 7.5zm0 2A3.5 3.5 0 1015.5 13 3.5 3.5 0 0012 9.5zM18 6.3a1 1 0 110 2 1 1 0 010-2z"/>
+  </svg>
+);
+
+const Mortarboard = () => (
+  <svg viewBox="0 0 200 120" className="mortarboard" aria-hidden="true" role="img">
+    <polygon points="10,50 100,10 190,50 100,90" fill="#0b3b69"/>
+    <polygon points="75,60 125,60 100,72" fill="#0a6fbf"/>
+    <line x1="150" y1="50" x2="150" y2="90" stroke="#ffb23f" strokeWidth="4"/>
+    <circle cx="150" cy="90" r="6" fill="#ffb23f"/>
+  </svg>
+);
 
 const LandingPage = ({ children }) => {
   const [darkMode, setDarkMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [signupOpen, setSignupOpen] = useState(false);
+  const signupCloseTimer = useRef(null);
 
-  // Apply dark mode
+  const openSignup = () => {
+    if (signupCloseTimer.current) {
+      clearTimeout(signupCloseTimer.current);
+      signupCloseTimer.current = null;
+    }
+    setSignupOpen(true);
+  };
+
+  const scheduleSignupClose = () => {
+    if (signupCloseTimer.current) clearTimeout(signupCloseTimer.current);
+    signupCloseTimer.current = setTimeout(() => {
+      setSignupOpen(false);
+    }, 700);
+  };
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  // Auto-scrolling testimonials
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const testimonials = [
     {
@@ -53,281 +95,81 @@ const LandingPage = ({ children }) => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-900 shadow-sm py-3 px-4 sticky top-0 z-50 border-b border-gray-100 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link
-            to="/"
-            className="flex items-center space-x-3 hover:opacity-90 transition-opacity"
-            aria-label="GLA University Home"
-          >
-            <img
-              src="/bonga-university-logo.png"
-              alt="GLA University Logo"
-              className="h-12 w-auto"
-              width={48}
-              height={48}
-            />
-            <span className="text-xl font-bold text-gray-800 dark:text-white">
-              <span className="block text-sm font-medium text-blue-600 dark:text-blue-400">
-                GLA University
-              </span>
-              <span>Graduate Verification</span>
-            </span>
-          </Link>
-
-          <nav className="hidden md:flex space-x-6">
-            <Link
-              to="/"
-              className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group"
-            >
-              Home
-              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-blue-600 group-hover:w-4/5 transition-all duration-300"></span>
-            </Link>
-            <Link
-              to="/login"
-              className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group"
-            >
-              Verify
-              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-blue-600 group-hover:w-4/5 transition-all duration-300"></span>
-            </Link>
-            <Link
-              to="/"
-              className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group"
-            >
-              About
-              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-blue-600 group-hover:w-4/5 transition-all duration-300"></span>
-            </Link>
-            <Link
-              to="/login"
-              className="px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors relative group"
-            >
-              Live Chat
-              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-blue-600 group-hover:w-4/5 transition-all duration-300"></span>
-            </Link>
+    <div className="min-h-screen flex flex-col bg-gray-50 transition-colors duration-300">
+      <header className="px-6 mt-2">
+        <div className="navbar">
+          <div className="brand">GLAU </div>
+          <nav className="nav-links">
+            <Link to="/">Home</Link>
+            <Link to="/about">About</Link>
+            <Link to="/login">Verify</Link>
+            <Link to="/login">Live Chat</Link>
           </nav>
-
-          <div className="flex items-center space-x-3">
-            <div className="relative group">
-              <button
-                className="flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all font-medium"
-                aria-haspopup="true"
-                aria-expanded={mobileMenuOpen ? "true" : "false"}
-              >
-                <span>Login As</span>
-                <svg
-                  className="w-4 h-4 transition-transform group-hover:rotate-180"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-
-              <div className="absolute right-0 mt-1 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 border border-gray-100 dark:border-gray-700 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 origin-top-right transform scale-95 group-hover:scale-100">
-                <div className="py-1">
-                  <Link
-                    to="/login"
-                    className="block px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      </svg>
-                      <span>External User</span>
-                    </div>
-                  </Link>
-                  <Link
-                    to="/registrar/login"
-                    className="block px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                        />
-                      </svg>
-                      <span>Registrar</span>
-                    </div>
-                  </Link>
-                  <Link
-                    to="/admin/login"
-                    className="block px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      <span>Admin</span>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        <div
-          className={`md:hidden bg-white dark:bg-gray-900 shadow-lg ${
-            mobileMenuOpen ? "block" : "hidden"
-          } transition-all duration-300 ease-in-out`}
-        >
-          <div className="px-4 pt-2 pb-4 space-y-2 border-t border-gray-100 dark:border-gray-700">
-            <Link
-              to="/"
-              className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              to="/login"
-              className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Verify
-            </Link>
-            <Link
-              to="/about"
-              className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              About
-            </Link>
-            <Link
-              to="/contact"
-              className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Contact
-            </Link>
-
-            <div className="pt-2 mt-2 border-t border-gray-100 dark:border-gray-700">
-              <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Login Options
-              </h3>
-              <Link
-                to="/login"
-                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                External User
-              </Link>
-              <Link
-                to="/registrar/login"
-                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Registrar
-              </Link>
-              <Link
-                to="/admin/login"
-                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Admin
-              </Link>
+          <div className={`dropdown ${signupOpen ? "open" : ""}`} onMouseEnter={openSignup} onMouseLeave={scheduleSignupClose}>
+            <Link to="/signup" className="btn btn-primary">Sign up</Link>
+            <div className="dropdown-menu" onMouseEnter={openSignup} onMouseLeave={scheduleSignupClose}>
+              <Link to="/admin/login" className="dropdown-item" onClick={() => setSignupOpen(false)}>Admin</Link>
+              <Link to="/registrar/login" className="dropdown-item" onClick={() => setSignupOpen(false)}>Registrar</Link>
+              <Link to="/signup" className="dropdown-item" onClick={() => setSignupOpen(false)}>User</Link>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="flex-grow p-6 max-w-7xl mx-auto w-full">{children}</main>
+      <main className="flex-grow px-6 pt-5 max-w-7xl mx-auto w-full">{children}</main>
 
-      {/* Hero Section */}
-      <section className="relative h-96 flex items-center justify-center text-center overflow-hidden">
-        <div className="absolute inset-0 bg-black/50 dark:bg-black/70 z-10"></div>
-        <img
-          // src="/graduation-ceremony.jpg"
-          // src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-          src="https://tse4.mm.bing.net/th/id/OIP.aLswZmEX0loOGgNOkAyCNAHaEJ?cb=thfc1&pid=ImgDet&w=208&h=116&c=7&dpr=1.5&o=7&rm=3"
-          alt="Graduation Ceremony"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="relative z-20 px-4 text-white max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Verify Graduate Credentials Instantly
-          </h1>
-          <p className="text-xl mb-8">
-            GLA University's secure digital platform for authenticating academic
-            documents. Trusted by employers nationwide.
-          </p>
-          <Link
-            to="/login"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center"
-          >
-            Verify Now <FiArrowRight className="ml-2" />
-          </Link>
+      
+      <section className="px-6 pb-5">
+        <div className="hero">
+          <section className="hero-left">
+            <h1 className="headline">
+              <span>GLAD TO</span>
+              <span>BE GRAD!</span>
+            </h1>
+            <p className="subtitle">
+              Verify graduate credentials instantly on a secure, modern platform trusted by employers.
+            </p>
+            <div className="cta-row">
+              <Link to="/login" className="btn btn-outline">Read more</Link>
+              <div className="socials">
+                <button aria-label="Twitter" className="social"><TwitterIcon /></button>
+                <button aria-label="Facebook" className="social"><FacebookIcon /></button>
+                <button aria-label="Instagram" className="social"><InstagramIcon /></button>
+              </div>
+            </div>
+          </section>
+
+          <section className="hero-art">
+            <div className="sun" />
+            <div className="leaf leaf-a" />
+            <div className="leaf leaf-b" />
+            <div className="graduate">
+              <div className="head" />
+              <div className="shoulder left" />
+              <div className="shoulder right" />
+            </div>
+            <Mortarboard />
+          </section>
         </div>
       </section>
 
       {/* System Description */}
-      <section className="py-16 px-6 bg-white dark:bg-gray-800">
+      <section className="py-16 bg-yellow px-6 pb-5">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             How Our System Works
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Step 1 - Login/Signup */}
-            <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md text-center">
+            <div className="bg-gray-50 p-6 rounded-lg shadow-md text-center">
+
               <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                 1
               </div>
-              <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+              <h3 className="text-xl font-bold mb-2 text-gray-900">
                 Login/Signup
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-600">
                 Create an account or login to access the verification system.
               </p>
               <div className="mt-4 flex justify-center space-x-3">
@@ -339,7 +181,7 @@ const LandingPage = ({ children }) => {
                 </Link>
                 <Link
                   to="/signup"
-                  className="text-sm bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-white py-2 px-4 rounded-lg"
+                  className="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg"
                 >
                   Sign Up
                 </Link>
@@ -347,40 +189,40 @@ const LandingPage = ({ children }) => {
             </div>
 
             {/* Step 2 - Submit Document */}
-            <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md text-center">
+            <div className="bg-gray-50 p-6 rounded-lg shadow-md text-center">
               <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                 2
               </div>
-              <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+              <h3 className="text-xl font-bold mb-2 text-gray-900">
                 Submit Document
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-600">
                 Enter the graduate's details to initiate verification.
               </p>
             </div>
 
             {/* Step 3 - Instant Verification */}
-            <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md text-center">
+            <div className="bg-gray-50 p-6 rounded-lg shadow-md text-center">
               <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                 3
               </div>
-              <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+              <h3 className="text-xl font-bold mb-2 text-gray-900">
                 Instant Verification
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-600">
                 Our system cross-checks with GLA University's secure database.
               </p>
             </div>
 
             {/* Step 4 - Get Results */}
-            <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg shadow-md text-center">
+            <div className="bg-gray-50 p-6 rounded-lg shadow-md text-center">
               <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                 4
               </div>
-              <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+              <h3 className="text-xl font-bold mb-2 text-gray-900">
                 Get Results
               </h3>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-gray-600">
                 Receive a digitally signed report within seconds.
               </p>
             </div>
@@ -389,9 +231,9 @@ const LandingPage = ({ children }) => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 px-6 bg-gray-100 dark:bg-gray-700">
+      <section className="py-16 px-6 bg-gray-100">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Who's Happy With Our System
           </h2>
           <div className="relative h-64 overflow-hidden">
@@ -401,9 +243,9 @@ const LandingPage = ({ children }) => {
             >
               {testimonials.map((testimonial) => (
                 <div key={testimonial.id} className="min-w-full px-4">
-                  <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg max-w-2xl mx-auto">
+                  <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl mx-auto">
                     <FaQuoteLeft className="text-blue-600 text-3xl mb-4" />
-                    <p className="text-gray-700 dark:text-gray-300 text-lg italic">
+                    <p className="text-gray-700 text-lg italic">
                       {testimonial.quote}
                     </p>
                     <div className="flex items-center mt-6">
@@ -412,7 +254,7 @@ const LandingPage = ({ children }) => {
                         alt={testimonial.company}
                         className="h-12 mr-4"
                       />
-                      <span className="font-bold dark:text-white">
+                      <span className="font-bold">
                         {testimonial.company}
                       </span>
                     </div>
@@ -427,7 +269,7 @@ const LandingPage = ({ children }) => {
       {/* Main Content */}
       <FAQSection />
       {/* Footer */}
-      <footer className="bg-gray-800 dark:bg-gray-950 text-white py-8 px-6">
+      <footer className="bg-gray-100 text-gray-800 py-8 px-6">
         <div className="max-w-7xl mx-auto">
           {/* Map Section - Now at the top */}
           <div
@@ -538,7 +380,7 @@ const LandingPage = ({ children }) => {
           </div>
 
           {/* Copyright Section */}
-          <div className="max-w-7xl mx-auto mt-8 pt-4 border-t border-gray-700 text-center">
+          <div className="max-w-7xl mx-auto mt-8 pt-4 border-t border-gray-300 text-center">
             <p>
               &copy; {new Date().getFullYear()} GLA University. All rights
               reserved.

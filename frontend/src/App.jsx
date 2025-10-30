@@ -12,6 +12,7 @@ import LandingPage from "./pages/LandingPage";
 import GraduateSearch from "./pages/GraduateSearch";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import AboutPage from "./pages/AboutPage";
 import AddGraduate from "./pages/AddGraduate";
 import ViewUpdateGraduates from "./pages/ViewUpdateGraduates";
 import ThemeProvider from "./pages/ThemeProvider";
@@ -66,6 +67,14 @@ const App = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/*" element={<LandingPage />} />
+        <Route
+          path="/about"
+          element={
+            <LandingPage>
+              <AboutPage />
+            </LandingPage>
+          }
+        />
         <Route
           path="/login"
           element={
