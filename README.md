@@ -1,6 +1,8 @@
 # 🎓 Web-Based Graduate Document Credentials Verification System
 
-A comprehensive, secure, and user-friendly *web-based graduate document credentials verification system with integrated national ID verification*. This full-stack application is built with a microservice architecture, comprising a main backend API, a React-based frontend, and a dedicated National ID API. It allows external users (employers, institutions) to verify the authenticity of graduate certificates and provides internal university administrators and registrars with secure tools for managing, uploading, and tracking graduate data.
+A full-stack **web-based graduate verification system with national ID verification** built with the MERN stack.
+This system allows external users (employers, institutions) to verify the authenticity of graduate certificates,
+while providing internal administrators secure tools for managing, uploading, and tracking graduate data.
 
 ## System Features
 
@@ -423,11 +425,10 @@ After successful signup and login, an external user can:
 
 ## Tech Stack
 
-- *Frontend:* React (Vite), Tailwind CSS, Material UI, Auth0, Socket.IO Client, Chart.js, PDFKit, QRCode.React, SweetAlert2, Framer Motion
-- *Backend:* Node.js, Express, MongoDB (Mongoose), Prisma (SQLite for specific features), Socket.IO, JWT, Bcrypt, Multer, Nodemailer, Twilio, PDFKit, XLSX
-- *National ID API:* Node.js, Express, MongoDB (Mongoose)
-- *Database:* MongoDB, SQLite
-- *Security:* Helmet.js, Express Rate Limit, CORS, JWT
+- **Frontend:** React, Vite, Tailwind CSS, Framer Motion, Axios, SweetAlert2
+- **Backend:** Node.js, Express, MongoDB (Mongoose), Socket.IO
+- **National ID API:** Node.js, Express, MongoDB
+- **Security:** Helmet.js, express-rate-limit, CORS, JWT
 
 ---
 
@@ -435,20 +436,17 @@ After successful signup and login, an external user can:
 
 ### Frontend (frontend/.env)
 
-env
-VITE_ADMIN_ROUTE=http://localhost:5000/api/admin
-VITE_NATIONAL_ID_ROUTE=http://localhost:7001/api/national-ids
-VITE_AUTH_ROUTE=http://localhost:5000/api/auth
-VITE_CHAT_ROUTE=http://localhost:5000/api/chat
-VITE_UPLOAD_ROUTE=http://localhost:5000/api/upload
-VITE_CERTIFICATE_ROUTE=http://localhost:5000/api/certificate
-VITE_REGISTRAR_ROUTE=http://localhost:5000/api/registrar
-
+```env
+VITE_ADMIN_ROUTE=http://localhost:5001/api/admin
+VITE_NATIONAL_ID_ROUTE=http://localhost:7000/api/national-ids
+VITE_AUTH_ROUTE=http://localhost:5001/api/auth
+VITE_CHAT_ROUTE=http://localhost:5001/api/chat
+```
 
 ### Backend (backend/.env)
 
-env
-NODE_ENV=development
+```env
+MONGO_URI=your_mongodb_url, like "mongodb+srv://<mongoDB_user_name>:<password>@cluster0.s4fepks.mongodb.net/nationalIdInfo?retryWrites=true&w=majority&appName=Cluster0
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
 DATABASE_URL="file:./dev.db" # For Prisma with SQLite
@@ -459,21 +457,18 @@ JWT_EXPIRE=7d
 ADMIN_EMAIL=your_admin_email@example.com
 
 EMAIL_SERVICE=Gmail
-EMAIL_USER=your_email@example.com
-EMAIL_PASSWORD=your_email_app_password # Or other email service credentials
+EMAIL_USER=madishamadiso00@gmail.com
+EMAIL_PASSWORD=@urim asqp wnfs faah
 
-TWILIO_ACCOUNT_SID=your_twilio_account_sid
-TWILIO_AUTH_TOKEN=your_twilio_auth_token
-TWILIO_PHONE_NUMBER=your_twilio_phone_number
-
-CLIENT_URL=http://localhost:5173
-
+JWT_EXPIRE=7d
+```
 
 ### National ID API (nationalidapi/.env)
 
-env
-PORT=7001
-MONGODB_NATIONAL_ID_URI=your_mongodb_national_id_connection_string
+```env
+MONGODB_NATIONAL_ID_URI=your_mongodb_url, like "mongodb+srv://<mongoDB_user_name>:<password>@cluster0.s4fepks.mongodb.net/nationalIdInfo?retryWrites=true&w=majority&appName=Cluster0
+PORT=7000
+JWT_SECRET=your_secret_key
 CLIENT_URL=http://localhost:5173
 
 
@@ -505,8 +500,8 @@ sh
 cd nationalidapi
 npm install
 npm run dev
-# Runs on http://localhost:7001
-
+# Runs on http://localhost:7000
+```
 
 ---
 
@@ -531,3 +526,4 @@ npm run dev
 
 > For questions, feedback, or collaboration opportunities,  
 > please feel free to reach out via email.
+
